@@ -1,24 +1,25 @@
 /* resuse.c - child process resource use library
    Copyright (C) 1993, 1996 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   Written by David MacKenzie, with help from
+   arnej@imf.unit.no (Arne Henrik Juul)
+   and pinard@iro.umontreal.ca (Francois Pinard).
 
-   This program is distributed in the hope that it will be useful,
+   This file is part of GNU Time.
+
+   GNU Time is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   GNU Time is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA.  */
-
-/* Written by David MacKenzie, with help from
-   arnej@imf.unit.no (Arne Henrik Juul)
-   and pinard@iro.umontreal.ca (Francois Pinard).  */
+   along with GNU Time.  If not, see <http://www.gnu.org/licenses/>.
+*/ 
 
 #include "wait.h"
 #include "port.h"

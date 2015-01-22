@@ -1,3 +1,6 @@
+Changes in version 1.7.1:
+* Released under GPL V3 License
+
 Major changes in version 1.7:
 
 * Reports average memory use figures more accurately on SunOS sparc,
