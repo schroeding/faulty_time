@@ -1,8 +1,13 @@
+Thu Jan 22 22:28:35 2015  David C Niemi <gnutime@dcn.tuxers.net>
+	* Version 1.7.3.
+	* Updated automake/autoconf
+
 Fri Dec 23 23:00:00 2012  David C Niemi <gnutime@dcn.tuxers.net>
 	* Version 1.7.2.
 
 Fri Dec 21 23:00:00 2012  David C Niemi <gnutime@dcn.tuxers.net>
 	* Version 1.7.1.
+	* GPL v3
 
 Thu Jul 11 12:37:17 1996  David J MacKenzie  <djm@catapult.va.pubnix.com>
 
