@@ -1,10 +1,8 @@
 /* port.h -- portability declarations for GNU time */
 
 #if __STDC__
-# define PARAMS(x) x
 # define PTR void *
 #else
-# define PARAMS(s) ()
 # define PTR char *
 #endif
 
@@ -18,8 +16,8 @@
 #include <limits.h>
 #include <stdlib.h>
 #else
-char *getenv PARAMS((const char *var));
-PTR malloc PARAMS((size_t sz));
+char *getenv (const char *var);
+PTR malloc (size_t sz);
 #endif
 #ifndef LONG_MAX
 #define	LONG_MAX (~(1 << (sizeof (long) * 8 - 1)))

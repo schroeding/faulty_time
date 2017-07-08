@@ -37,7 +37,7 @@
 
 
 
-static void usage PARAMS((FILE *, int));
+static void usage (FILE *, int);
 
 /* A Pointer to a signal handler.  */
 typedef RETSIGTYPE (*sighandler) ();

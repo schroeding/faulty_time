@@ -62,9 +62,9 @@ typedef struct
 } RESUSE;
 
 /* Prepare to measure a child process.  */
-void resuse_start PARAMS ((RESUSE *resp));
+void resuse_start (RESUSE *resp);
 
 /* Wait for and fill in data on child process PID.  */
-int resuse_end PARAMS ((pid_t pid, RESUSE *resp));
+int resuse_end (pid_t pid, RESUSE *resp);
 
 #endif /* _RESUSE_H */
