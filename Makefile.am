@@ -46,7 +46,7 @@ time_LDADD = \
 
 #SUBDIRS = . gnulib-tests
 
-EXTRA_DIST += texinfo.tex \
+EXTRA_DIST += \
 	m4/gnulib-cache.m4
 
 info_TEXINFOS = doc/time.texi
