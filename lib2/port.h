@@ -5,9 +5,3 @@
 #else
 # define PTR char *
 #endif
-
-#if STDC_HEADERS || HAVE_STRING_H
-#include <string.h>
-#else
-#include <strings.h>
-#endif
