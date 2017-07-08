@@ -75,15 +75,6 @@ AC_FUNC_VPRINTF
 AC_FUNC_WAIT3
 AC_CHECK_FUNCS(strerror)
 
-AC_MSG_CHECKING(for getpagesize)
-AC_TRY_LINK([#include <sys/param.h>],
-[getpagesize();], have_gp=yes, have_gp=no)
-AC_MSG_RESULT($have_gp)
-
-if test $have_gp = yes ; then
-  AC_DEFINE([HAVE_GETPAGESIZE], [1], [Have GETPAGESIZE])
-fi
-
 # This is needed when building outside the source dir
 # with --disable-dependency-tracking.
 # Inspired by sed's https://bugs.gnu.org/25371

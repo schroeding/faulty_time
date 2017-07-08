@@ -35,7 +35,6 @@ lib_libtime_a_DEPENDENCIES += $(LIBOBJS)
 bin_PROGRAMS = time
 
 time_SOURCES = \
-	lib2/getpagesize.h \
 	lib2/wait.h \
 	src/time.c \
 	src/resuse.c src/resuse.h
