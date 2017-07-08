@@ -40,6 +40,8 @@ time_SOURCES = \
 	src/time.c \
 	src/resuse.c src/resuse.h
 
+time_CFLAGS = $(WARN_CFLAGS)
+
 time_LDADD = \
        $(top_builddir)/lib/lib$(PACKAGE).a
 

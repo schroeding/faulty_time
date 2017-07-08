@@ -34,6 +34,24 @@ AC_PROG_INSTALL
 gl_EARLY
 gl_INIT
 
+# Add extra compilation warnings. These will only apply to datamash.c not to
+# any gnulib modules). See $(WARN_CFLAGS) in Makefile.am
+gl_WARN_ADD([-Wall])
+gl_WARN_ADD([-Wextra])
+gl_WARN_ADD([-Wformat-security])
+gl_WARN_ADD([-Wswitch-enum])
+gl_WARN_ADD([-Wswitch-default])
+gl_WARN_ADD([-Wformat-nonliteral])
+gl_WARN_ADD([-Wunused-parameter])
+gl_WARN_ADD([-Wfloat-equal])
+gl_WARN_ADD([-fdiagnostics-show-option])
+gl_WARN_ADD([-funit-at-a-time])
+gl_WARN_ADD([-Wmissing-format-attribute])
+gl_WARN_ADD([-Wstrict-overflow])
+gl_WARN_ADD([-Wsuggest-attribute=const])
+gl_WARN_ADD([-Wsuggest-attribute=pure])
+AC_SUBST([WARN_CFLAGS])
+
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
