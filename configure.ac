@@ -63,13 +63,6 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
 
-AC_MSG_CHECKING(for struct timeval in sys/time.h)
-AC_EGREP_HEADER(tv_usec, sys/time.h, have_tv=yes, have_tv=no)
-AC_MSG_RESULT($have_tv)
-if test $have_tv = yes ; then
-  AC_DEFINE([HAVE_TIMEVAL], [1], [Have TIMEVAL])
-fi
-
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_FUNC_WAIT3

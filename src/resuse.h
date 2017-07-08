@@ -20,17 +20,6 @@
 #ifndef _RESUSE_H
 #define _RESUSE_H 1
 
-#if HAVE_TIMEVAL
-# include <sys/time.h>
-#else
-/* High resolution clock structure.  */
-struct timeval
-{
-  long tv_sec;			/* Seconds.  */
-  long tv_usec;			/* Microseconds.  */
-};
-#endif
-
 #if HAVE_SYS_RUSAGE_H
 /* This rusage structure measures nanoseconds instead of microseconds.  */
 # define TV_MSEC tv_nsec / 1000000
