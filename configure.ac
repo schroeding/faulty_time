@@ -1,11 +1,19 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(time.c)
-VERSION=1.7
-AC_SUBST(VERSION)
-PACKAGE=time
-AC_SUBST(PACKAGE)
 
-AC_ARG_PROGRAM
+AC_INIT([GNU Time],
+	[1.7.3],
+	[bug-time@gnu.org], [],
+	[https://www.gnu.org/software/time/])
+
+dnl Must come before AM_INIT_AUTOMAKE.
+AC_CONFIG_AUX_DIR([build-aux])
+AM_INIT_AUTOMAKE([
+	1.11.1
+	subdir-objects
+])
+
+dnl Minimum Autoconf version required.
+AC_PREREQ([2.62])
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -39,4 +47,6 @@ AC_TRY_LINK([#include <sys/param.h>],
 AC_MSG_RESULT($have_gp)
 test $have_gp = yes && AC_DEFINE(HAVE_GETPAGESIZE)
 
-AC_OUTPUT(Makefile)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
