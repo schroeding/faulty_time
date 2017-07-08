@@ -28,6 +28,8 @@
 #include <sys/param.h>		/* For getpagesize, maybe.  */
 #include <signal.h>
 #include <errno.h>
+#include "error.h"
+
 #ifndef errno
 extern int errno;
 #endif
@@ -36,7 +38,7 @@ extern int errno;
 #include "resuse.h"
 #include "getpagesize.h"
 
-void error PARAMS((int status, int errnum, char *message, ...));
+
 
 static void usage PARAMS((FILE *, int));
 
