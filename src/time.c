@@ -30,9 +30,6 @@
 #include <errno.h>
 #include "error.h"
 
-#ifndef errno
-extern int errno;
-#endif
 #include <getopt.h>
 #include "port.h"
 #include "resuse.h"
