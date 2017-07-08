@@ -20,27 +20,11 @@
 #ifndef _RESUSE_H
 #define _RESUSE_H 1
 
-#if HAVE_SYS_RUSAGE_H
-/* This rusage structure measures nanoseconds instead of microseconds.  */
-# define TV_MSEC tv_nsec / 1000000
-# include <sys/rusage.h>
-#else
-# define TV_MSEC tv_usec / 1000
-# if HAVE_WAIT3
-#  include <sys/resource.h>
-# else
-/* Process resource usage structure.  */
-struct rusage
-{
-  struct timeval ru_utime;	/* User time used.  */
-  struct timeval ru_stime;	/* System time used.  */
-  int ru_maxrss, ru_ixrss, ru_idrss, ru_isrss,
-  ru_minflt, ru_majflt, ru_nswap, ru_inblock, 
-  ru_oublock, ru_msgsnd, ru_msgrcv, ru_nsignals,
-  ru_nvcsw, ru_nivcsw;
-};
-# endif
-#endif
+
+/* Convert rusage's microseconds to miliseconds */
+#define TV_MSEC tv_usec / 1000
+
+
 
 /* Information on the resources used by a child process.  */
 typedef struct

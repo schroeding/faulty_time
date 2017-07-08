@@ -24,6 +24,7 @@
 #include "config.h"
 
 #include <sys/wait.h>
+#include <sys/resource.h>
 #include <stdio.h>
 #include <signal.h>
 #include <getopt.h>

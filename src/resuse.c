@@ -24,6 +24,7 @@
 #include "config.h"
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <sys/resource.h>
 
 #if !HAVE_WAIT3
 # include <sys/times.h>
