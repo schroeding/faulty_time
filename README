@@ -8,6 +8,6 @@ unavailable information as zero values.
 See the file INSTALL for compilation and installation instructions.
 
 Mail suggestions and bug reports for GNU time to
-bug-gnu-utils@prep.ai.mit.edu.  Please include the version of
+bug-time@gnu.org.  Please include the version of
 `time', which you can get by running `time --version', and the
 operating system and C compiler you used.

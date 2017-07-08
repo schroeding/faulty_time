@@ -137,7 +137,7 @@ misc-group:nobody
 @end example
 
 Mail suggestions and bug reports for GNU @code{time} to
-@code{bug-gnu-utils@@prep.ai.mit.edu}.  Please include the version of
+@code{bug-time@@gnu.org}.  Please include the version of
 @code{time}, which you can get by running @samp{time --version}, and the
 operating system and C compiler you used.
 
