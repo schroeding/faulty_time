@@ -10,6 +10,9 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([
 	1.11.1
 	subdir-objects
+	dist-xz
+	color-tests
+	parallel-tests
 ])
 
 dnl Minimum Autoconf version required.
@@ -24,6 +27,12 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
+
+# Since we use gnulib: gl_EARLY must be called as soon as possible after
+# the C compiler is checked.  The others could be later, but we just
+# keep everything together.
+gl_EARLY
+gl_INIT
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -57,6 +66,13 @@ if test $have_gp = yes ; then
   AC_DEFINE([HAVE_GETPAGESIZE], [1], [Have GETPAGESIZE])
 fi
 
+# This is needed when building outside the source dir
+# with --disable-dependency-tracking.
+# Inspired by sed's https://bugs.gnu.org/25371
+AS_MKDIR_P([lib])
+AS_MKDIR_P([src])
+AS_MKDIR_P([doc])
+AS_MKDIR_P([tests])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
