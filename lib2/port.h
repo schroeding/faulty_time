@@ -11,14 +11,3 @@
 #else
 #include <strings.h>
 #endif
-
-#if STDC_HEADERS
-#include <limits.h>
-#include <stdlib.h>
-#else
-char *getenv (const char *var);
-PTR malloc (size_t sz);
-#endif
-#ifndef LONG_MAX
-#define	LONG_MAX (~(1 << (sizeof (long) * 8 - 1)))
-#endif

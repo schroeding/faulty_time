@@ -29,6 +29,8 @@
 #include <signal.h>
 #include <getopt.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 #include "error.h"
 
