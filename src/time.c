@@ -27,10 +27,10 @@
 #include <stdio.h>
 #include <sys/param.h>		/* For getpagesize, maybe.  */
 #include <signal.h>
+#include <getopt.h>
 #include <errno.h>
 #include "error.h"
 
-#include <getopt.h>
 #include "port.h"
 #include "resuse.h"
 #include "getpagesize.h"
