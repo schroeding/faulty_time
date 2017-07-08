@@ -23,7 +23,7 @@
 
 #include "config.h"
 #include <sys/time.h>
-#include "wait.h"
+#include <sys/wait.h>
 
 #if !HAVE_WAIT3
 # include <sys/times.h>

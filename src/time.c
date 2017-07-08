@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#include "wait.h"
+#include <sys/wait.h>
 #include <stdio.h>
 #include <signal.h>
 #include <getopt.h>

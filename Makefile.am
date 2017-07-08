@@ -3,7 +3,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CPPFLAGS = \
 	-Ilib -I$(top_srcdir)/lib -I$(top_builddir)/lib \
-	-Ilib2 -I$(top_srcdir)/lib2 \
 	-Isrc -I$(top_srcdir)/src
 
 ##
@@ -11,6 +10,7 @@ AM_CPPFLAGS = \
 ##
 CLEANFILES =
 MOSTLYCLEANFILES =
+MOSTLYCLEANDIRS =
 noinst_LIBRARIES =
 EXTRA_DIST =
 BUILT_SOURCES =
@@ -35,7 +35,6 @@ lib_libtime_a_DEPENDENCIES += $(LIBOBJS)
 bin_PROGRAMS = time
 
 time_SOURCES = \
-	lib2/wait.h \
 	src/time.c \
 	src/resuse.c src/resuse.h
 
