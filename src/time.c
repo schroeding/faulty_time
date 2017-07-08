@@ -21,7 +21,7 @@
 */ 
 
 
-extern const char *version_string;
+#include "config.h"
 
 #include "wait.h"
 #include <stdio.h>
@@ -561,7 +561,7 @@ getargs (argc, argv)
 	  verbose = true;
 	  break;
 	case 'V':
-	  fprintf (stderr, "%s\n", version_string);
+	  fprintf (stderr, "%s\n", PACKAGE_STRING);
 	  exit (0);
 	default:
 	  usage (stderr, 1);

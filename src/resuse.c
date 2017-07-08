@@ -21,6 +21,7 @@
    along with GNU Time.  If not, see <http://www.gnu.org/licenses/>.
 */ 
 
+#include "config.h"
 #include "wait.h"
 #include "port.h"
 

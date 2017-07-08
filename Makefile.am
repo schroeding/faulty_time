@@ -8,8 +8,7 @@ time_SOURCES = \
 	lib/port.h lib/wait.h \
 	lib/getopt.c lib/getopt1.c lib/error.c \
 	src/time.c \
-	src/resuse.c src/resuse.h \
-	src/version.c
+	src/resuse.c src/resuse.h
 
 EXTRA_DIST = texinfo.tex
 

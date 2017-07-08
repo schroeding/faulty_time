@@ -15,6 +15,11 @@ AM_INIT_AUTOMAKE([
 dnl Minimum Autoconf version required.
 AC_PREREQ([2.62])
 
+
+dnl Where to generate output; srcdir location.
+AC_CONFIG_HEADERS([config.h:config.in])
+AC_CONFIG_SRCDIR([src/time.c])
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
@@ -34,7 +39,9 @@ AC_TYPE_SIGNAL
 AC_MSG_CHECKING(for struct timeval in sys/time.h)
 AC_EGREP_HEADER(tv_usec, sys/time.h, have_tv=yes, have_tv=no)
 AC_MSG_RESULT($have_tv)
-test $have_tv = yes && AC_DEFINE(HAVE_TIMEVAL)
+if test $have_tv = yes ; then
+  AC_DEFINE([HAVE_TIMEVAL], [1], [Have TIMEVAL])
+fi
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
@@ -45,7 +52,10 @@ AC_MSG_CHECKING(for getpagesize)
 AC_TRY_LINK([#include <sys/param.h>],
 [getpagesize();], have_gp=yes, have_gp=no)
 AC_MSG_RESULT($have_gp)
-test $have_gp = yes && AC_DEFINE(HAVE_GETPAGESIZE)
+
+if test $have_gp = yes ; then
+  AC_DEFINE([HAVE_GETPAGESIZE], [1], [Have GETPAGESIZE])
+fi
 
 
 AC_CONFIG_FILES([Makefile])
