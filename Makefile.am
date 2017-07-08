@@ -1,12 +1,12 @@
 
-AM_CPPFLAGS = -Ilib -I$(top_srcdir)/lib -Isrc -I$(top_srcdir)/src
+AM_CPPFLAGS = -Ilib2 -I$(top_srcdir)/lib2 -Isrc -I$(top_srcdir)/src
 
 bin_PROGRAMS = time
 
 time_SOURCES = \
-	lib/getopt.h lib/getpagesize.h \
-	lib/port.h lib/wait.h \
-	lib/getopt.c lib/getopt1.c lib/error.c \
+	lib2/getopt.h lib2/getpagesize.h \
+	lib2/port.h lib2/wait.h \
+	lib2/getopt.c lib2/getopt1.c lib2/error.c \
 	src/time.c \
 	src/resuse.c src/resuse.h
 
