@@ -22,7 +22,3 @@ PTR malloc (size_t sz);
 #ifndef LONG_MAX
 #define	LONG_MAX (~(1 << (sizeof (long) * 8 - 1)))
 #endif
-
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif

@@ -37,7 +37,7 @@ gl_INIT
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(unistd.h string.h sys/rusage.h)
+AC_CHECK_HEADERS(string.h sys/rusage.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
