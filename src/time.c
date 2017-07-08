@@ -35,7 +35,6 @@
 #include <unistd.h>
 #include "error.h"
 
-#include "port.h"
 #include "resuse.h"
 #include "getpagesize.h"
 
