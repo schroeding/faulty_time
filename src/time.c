@@ -47,6 +47,24 @@
 #define _(x) (x)
 
 
+/* Exit statuses for programs like 'env' that exec other programs.
+   Copied from coreutils' system.h */
+enum
+{
+  EXIT_CANCELED = 125, /* Internal error prior to exec attempt.  */
+  EXIT_CANNOT_INVOKE = 126, /* Program located, but not usable.  */
+  EXIT_ENOENT = 127 /* Could not find program to exec.  */
+};
+
+/* If the inferior program exited abnormally (e.g. signalled)
+   add this offset to time's exit code: this is what sh
+   returns for signaled processes. */
+#define SIGNALLED_OFFSET 128
+
+
+
+
+
 #define AUTHORS \
     "David Keppel",                 \
     "David MacKenzie",              \
@@ -674,14 +692,14 @@ getargs (argc, argv)
                    (char *) NULL);
       exit (EXIT_SUCCESS);
 	default:
-	  usage (EXIT_FAILURE);
+	  usage (EXIT_CANCELED);
 	}
     }
 
   if (optind == argc)
     {
       error (0, 0, _("missing program to run"));
-      usage (EXIT_FAILURE);
+      usage (EXIT_CANCELED);
     }
 
   if (outfile)
@@ -691,7 +709,7 @@ getargs (argc, argv)
       else
 	outfp = fopen (outfile, "w");
       if (outfp == NULL)
-	error (1, errno, "%s", outfile);
+	error (EXIT_CANCELED, errno, "%s", outfile);
     }
 
   /* If the user specified verbose output, we need to convert
@@ -700,7 +718,7 @@ getargs (argc, argv)
     {
       output_format = (const char *) linear_argv (longstats);
       if (output_format == NULL)
-	exit (1);		/* Out of memory.  */
+	exit (EXIT_CANCELED);		/* Out of memory.  */
     }
 
   return (const char **) &argv[optind];
@@ -716,19 +734,21 @@ run_command (cmd, resp)
 {
   pid_t pid;			/* Pid of child.  */
   sighandler interrupt_signal, quit_signal;
+  int saved_errno;
 
   resuse_start (resp);
 
   pid = fork ();		/* Run CMD as child process.  */
   if (pid < 0)
-    error (1, errno, "cannot fork");
+    error (EXIT_CANCELED, errno, "cannot fork");
   else if (pid == 0)
     {				/* If child.  */
       /* Don't cast execvp arguments; that causes errors on some systems,
 	 versus merely warnings if the cast is left off.  */
       execvp (cmd[0], cmd);
+      saved_errno = errno;
       error (0, errno, "cannot run %s", cmd[0]);
-      _exit (errno == ENOENT ? 127 : 126);
+      _exit (saved_errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
     }
 
   /* Have signals kill the child but not self (if possible).  */
@@ -750,6 +770,7 @@ main (argc, argv)
 {
   const char **command_line;
   RESUSE res;
+  int status;
 
   command_line = getargs (argc, argv);
   run_command (command_line, &res);
@@ -757,9 +778,17 @@ main (argc, argv)
   fflush (outfp);
 
   if (WIFSTOPPED (res.waitstatus))
-    exit (WSTOPSIG (res.waitstatus));
+    status = WSTOPSIG (res.waitstatus) + SIGNALLED_OFFSET;
   else if (WIFSIGNALED (res.waitstatus))
-    exit (WTERMSIG (res.waitstatus));
+    status = WTERMSIG (res.waitstatus) + SIGNALLED_OFFSET;
   else if (WIFEXITED (res.waitstatus))
-    exit (WEXITSTATUS (res.waitstatus));
+    status = WEXITSTATUS (res.waitstatus);
+  else
+    {
+      /* shouldn't happen.  */
+      error (0, 0, _("unknown status from command (%d)"), res.waitstatus);
+      status = EXIT_FAILURE;
+    }
+
+  return status;
 }
