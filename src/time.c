@@ -198,6 +198,9 @@ static const char *output_format;
 /* The name this program was invoked by.  */
 char *program_name;
 
+/* Quiet mode: do not print info about abnormal terminations */
+static boolean quiet;
+
 static struct option longopts[] =
 {
   {"append", no_argument, NULL, 'a'},
@@ -205,6 +208,7 @@ static struct option longopts[] =
   {"help", no_argument, NULL, 'h'},
   {"output-file", required_argument, NULL, 'o'},
   {"portability", no_argument, NULL, 'p'},
+  {"quiet", no_argument, NULL, 'q'},
   {"verbose", no_argument, NULL, 'v'},
   {"version", no_argument, NULL, 'V'},
   {NULL, no_argument, NULL, 0}
@@ -254,6 +258,10 @@ Usage: %s [-apvV] [-f format] [-o file] [--append] [--verbose]\n\
                               real %%e\n\
                               user %%U\n\
                               sys %%S\n\
+"), stdout);
+  fputs (_("\
+  -q, --quiet               do not print information about abnormal program\n\
+                            termination (non-zero exit codes or signals)\n\
 "), stdout);
   fputs (_("\
   -v, --verbose             print all resource usage information instead of\n\
@@ -456,15 +464,18 @@ summarize (fp, fmt, command, resp)
   unsigned long r;		/* Elapsed real milliseconds.  */
   unsigned long v;		/* Elapsed virtual (CPU) milliseconds.  */
 
-  if (WIFSTOPPED (resp->waitstatus))
-    fprintf (fp, "Command stopped by signal %d\n",
-	     WSTOPSIG (resp->waitstatus));
-  else if (WIFSIGNALED (resp->waitstatus))
-    fprintf (fp, "Command terminated by signal %d\n",
-	     WTERMSIG (resp->waitstatus));
-  else if (WIFEXITED (resp->waitstatus) && WEXITSTATUS (resp->waitstatus))
-    fprintf (fp, "Command exited with non-zero status %d\n",
-	     WEXITSTATUS (resp->waitstatus));
+  if (!quiet)
+    {
+      if (WIFSTOPPED (resp->waitstatus))
+        fprintf (fp, "Command stopped by signal %d\n",
+                 WSTOPSIG (resp->waitstatus));
+      else if (WIFSIGNALED (resp->waitstatus))
+        fprintf (fp, "Command terminated by signal %d\n",
+                 WTERMSIG (resp->waitstatus));
+      else if (WIFEXITED (resp->waitstatus) && WEXITSTATUS (resp->waitstatus))
+        fprintf (fp, "Command exited with non-zero status %d\n",
+                 WEXITSTATUS (resp->waitstatus));
+    }
 
   /* Convert all times to milliseconds.  Occasionally, one of these values
      comes out as zero.  Dividing by zero causes problems, so we first
@@ -665,7 +676,7 @@ getargs (argc, argv)
   if (format)
     output_format = format;
 
-  while ((optc = getopt_long (argc, argv, "+af:o:pvV", longopts, (int *) 0))
+  while ((optc = getopt_long (argc, argv, "+af:o:pqvV", longopts, (int *) 0))
 	 != EOF)
     {
       switch (optc)
@@ -684,6 +695,9 @@ getargs (argc, argv)
 	case 'p':
 	  output_format = posix_format;
 	  break;
+    case 'q':
+      quiet = true;
+      break;
 	case 'v':
 	  verbose = true;
 	  break;
