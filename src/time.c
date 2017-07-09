@@ -3,6 +3,7 @@
 
    Originally written by David Keppel <pardo@cs.washington.edu>.
    Heavily modified by David MacKenzie <djm@gnu.ai.mit.edu>.
+   Heavily modified (again) by Assaf Gordon <assafgordon@gmail.com>.
 
    This file is part of GNU Time.
 
@@ -34,6 +35,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include "error.h"
+#define Version VERSION
+#include "version-etc.h"
 
 #include "resuse.h"
 
@@ -43,6 +46,11 @@
 /* For now, no gettext support */
 #define _(x) (x)
 
+
+#define AUTHORS \
+    "David Keppel",                 \
+    "David MacKenzie",              \
+    "Assaf Gordon"
 
 
 /* A Pointer to a signal handler.  */
@@ -662,8 +670,9 @@ getargs (argc, argv)
 	  verbose = true;
 	  break;
 	case 'V':
-	  fprintf (stderr, "%s\n", PACKAGE_STRING);
-	  exit (0);
+      version_etc (stdout, PROGRAM_NAME, PACKAGE_NAME, Version, AUTHORS,
+                   (char *) NULL);
+      exit (EXIT_SUCCESS);
 	default:
 	  usage (EXIT_FAILURE);
 	}
