@@ -39,7 +39,11 @@
 
 
 
-static void usage (FILE *, int);
+
+/* For now, no gettext support */
+#define _(x) (x)
+
+
 
 /* A Pointer to a signal handler.  */
 typedef RETSIGTYPE (*sighandler) ();
@@ -179,7 +183,103 @@ static struct option longopts[] =
   {"version", no_argument, NULL, 'V'},
   {NULL, no_argument, NULL, 0}
 };
-
+
+# define PROGRAM_NAME "time"
+
+
+static void
+usage (int status)
+{
+  if (status != EXIT_SUCCESS)
+    {
+      fprintf (stderr, _("Try '%s --help' for more information.\n"),
+               program_name);
+      exit (status);
+    }
+
+  /* If normal exit status, print usage info on stdout */
+
+  printf (_("\
+Usage: %s [OPTIONS] COMMAND [ARG]...\n\
+"),program_name);
+  fputs (_("\
+Run COMMAND, then print system resource usage.\n\
+\n\
+"), stdout);
+
+  /*
+    printf ("\
+Usage: %s [-apvV] [-f format] [-o file] [--append] [--verbose]\n\
+       [--portability] [--format=format] [--output=file] [--version]\n\
+       [--help] command [arg...]\n",
+          program_name);
+  */
+
+  fputs (_("\
+  -a, --append              with -o FILE, append instead of overwriting\n\
+"), stdout);
+  fputs (_("\
+  -f, --format=FORMAT       use the specified FORMAT instead of the default\n\
+"), stdout);
+  fputs (_("\
+  -o, --output=FILE         write to FILE instead of STDOUT\n"), stdout);
+  fputs (_("\
+  -p, --portability         print POSIX standard 1003.2 conformant string:\n\
+                              real %%e\n\
+                              user %%U\n\
+                              sys %%S\n\
+"), stdout);
+  fputs (_("\
+  -v, --verbose             print all resource usage information instead of\n\
+                            the default format\n\
+"), stdout);
+
+
+  fputs (_("\
+  -h,  --help               display this help and exit\n"), stdout);
+  fputs (_("\
+  -V,  --version            output version information and exit\n"), stdout);
+
+  /* Commonly used variables */
+  fputs (_("\nCommonly usaged format sequences for -f/--format:\n"), stdout);
+  fputs (_("(see documentation for full list)\n"), stdout);
+
+  fputs (_("  %%   a literal '%'\n"), stdout);
+  fputs (_("  %C   command line and arguments\n"), stdout);
+  fputs (_("  %c   involuntary context switches\n"), stdout);
+  fputs (_("  %E   elapsed real time (wall clock) in [hour:]min:sec\n"), stdout);
+  fputs (_("  %e   elapsed real time (wall clock) in seconds\n"), stdout);
+  fputs (_("  %F   major page faults\n"), stdout);
+  fputs (_("  %M   maximum resident set size in KB\n"), stdout);
+  fputs (_("  %P   percent of CPU this job got\n"), stdout);
+  fputs (_("  %R   minor page faults\n"), stdout);
+  fputs (_("  %S   system (kernel) time in seconds\n"), stdout);
+  fputs (_("  %U   user time in seconds\n"), stdout);
+  fputs (_("  %w   voluntary context switches\n"), stdout);
+  fputs (_("  %x   exit status of command\n"), stdout);
+
+  /* Default output format */
+  fputs (_("\nDefault output format:\n"), stdout);
+  fputs (default_format, stdout);
+  fputc ('\n',stdout);
+
+  /* Warning about shell's built-in 'time', copied from
+     coreutils' */
+  printf ("\n\
+NOTE: your shell may have its own version of %s, which usually supersedes\n\
+the version described here.  Please refer to your shell's documentation\n\
+for details about the options it supports.\n",
+          PROGRAM_NAME);
+
+  /* General help information, copied from coreutils' emit_ancillary_info */
+  printf (_("\n%s website: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
+  printf (_("Full documentation at: <%smanual>\n"), PACKAGE_URL);
+  printf (_("E-mail bug reports to: %s\n"), PACKAGE_BUGREPORT);
+
+  exit (EXIT_SUCCESS);
+}
+
+
 /* Print ARGV to FP, with each entry in ARGV separated by FILLER.  */
 
 static void
@@ -551,7 +651,7 @@ getargs (argc, argv)
 	  output_format = optarg;
 	  break;
 	case 'h':
-	  usage (stdout, 0);
+	  usage (EXIT_SUCCESS);
 	case 'o':
 	  outfile = optarg;
 	  break;
@@ -565,12 +665,15 @@ getargs (argc, argv)
 	  fprintf (stderr, "%s\n", PACKAGE_STRING);
 	  exit (0);
 	default:
-	  usage (stderr, 1);
+	  usage (EXIT_FAILURE);
 	}
     }
 
   if (optind == argc)
-    usage (stderr, 1);
+    {
+      error (0, 0, _("missing program to run"));
+      usage (EXIT_FAILURE);
+    }
 
   if (outfile)
     {
@@ -650,17 +753,4 @@ main (argc, argv)
     exit (WTERMSIG (res.waitstatus));
   else if (WIFEXITED (res.waitstatus))
     exit (WEXITSTATUS (res.waitstatus));
-}
-
-static void
-usage (stream, status)
-     FILE *stream;
-     int status;
-{
-  fprintf (stream, "\
-Usage: %s [-apvV] [-f format] [-o file] [--append] [--verbose]\n\
-       [--portability] [--format=format] [--output=file] [--version]\n\
-       [--help] command [arg...]\n",
-	   program_name);
-  exit (status);
 }
