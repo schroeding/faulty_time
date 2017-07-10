@@ -67,6 +67,32 @@ AC_FUNC_VPRINTF
 AC_FUNC_WAIT3
 AC_CHECK_FUNCS(strerror)
 
+
+# What memory units are reported by getrusage(2) ?
+case "$host_os" in
+  linux*)
+     AC_DEFINE([GETRUSAGE_RETURNS_KB],[1],
+               [Define to 1 if getrusage(2) on this systems returns
+                ru_maxrss in kilobytes])
+     ;;
+
+  macos* | darwin*)
+     AC_DEFINE([GETRUSAGE_RETURNS_BYTES],[1],
+               [Define to 1 if getrusage(2) on this systems returns
+                ru_maxrss in bytes])
+     ;;
+
+  solaris*)
+     AC_DEFINE([GETRUSAGE_RETURNS_PAGES],[1],
+               [Define to 1 if getrusage(2) on this systems returns
+                ru_maxrss in pages])
+     ;;
+
+  *) AC_MSG_ERROR([unknown getrusage behavior on host on '$host_os',
+                   please report this to bug-time@gnu.org]);;
+esac
+
+
 # This is needed when building outside the source dir
 # with --disable-dependency-tracking.
 # Inspired by sed's https://bugs.gnu.org/25371

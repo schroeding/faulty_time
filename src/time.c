@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <getopt.h>
+#include <inttypes.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +40,7 @@
 #include "version-etc.h"
 
 #include "resuse.h"
-
+#include "rusage-kb.h"
 
 
 
@@ -377,39 +378,7 @@ linear_argv (argv)
   return new;
 }
 
-/* Return the number of kilobytes corresponding to a number of pages PAGES.
-   (Actually, we use it to convert pages*ticks into kilobytes*ticks.)
 
-   Try to do arithmetic so that the risk of overflow errors is minimized.
-   This is funky since the pagesize could be less than 1K.
-   Note: Some machines express getrusage statistics in terms of K,
-   others in terms of pages.  */
-
-static unsigned long
-ptok (pages)
-     unsigned long pages;
-{
-  static unsigned long ps = 0;
-  unsigned long tmp;
-  static long size = LONG_MAX;
-
-  /* Initialization.  */
-  if (ps == 0)
-    ps = (long) getpagesize ();
-
-  /* Conversion.  */
-  if (pages > (LONG_MAX / ps))
-    {				/* Could overflow.  */
-      tmp = pages / 1024;	/* Smaller first, */
-      size = tmp * ps;		/* then larger.  */
-    }
-  else
-    {				/* Could underflow.  */
-      tmp = pages * ps;		/* Larger first, */
-      size = tmp / 1024;	/* then smaller.  */
-    }
-  return size;
-}
 
 /* summarize: Report on the system use of a command.
 
@@ -500,12 +469,12 @@ summarize (fp, fmt, command, resp)
 	    case 'C':		/* The command that got timed.  */
 	      fprintargv (fp, command, " ");
 	      break;
-	    case 'D':		/* Average unshared data size.  */
-	      fprintf (fp, "%lu",
-		       MSEC_TO_TICKS (v) == 0 ? 0 :
-		       ptok ((UL) resp->ru.ru_idrss) / MSEC_TO_TICKS (v) +
-		       ptok ((UL) resp->ru.ru_isrss) / MSEC_TO_TICKS (v));
-	      break;
+        case 'D': /* Average unshared data size.  */
+          fprintf (fp, "%" PRIuMAX,
+                   MSEC_TO_TICKS (v) == 0 ? 0 :
+                   get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                   get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+          break;
 	    case 'E':		/* Elapsed real (wall clock) time.  */
 	      if (resp->elapsed.tv_sec >= 3600)	/* One hour -> h:m:s.  */
 		fprintf (fp, "%ld:%02ld:%02ld",
@@ -524,16 +493,18 @@ summarize (fp, fmt, command, resp)
 	    case 'I':		/* Inputs.  */
 	      fprintf (fp, "%ld", resp->ru.ru_inblock);
 	      break;
-	    case 'K':		/* Average mem usage == data+stack+text.  */
-	      fprintf (fp, "%lu",
-		       MSEC_TO_TICKS (v) == 0 ? 0 :
-		       ptok ((UL) resp->ru.ru_idrss) / MSEC_TO_TICKS (v) +
-		       ptok ((UL) resp->ru.ru_isrss) / MSEC_TO_TICKS (v) +
-		       ptok ((UL) resp->ru.ru_ixrss) / MSEC_TO_TICKS (v));
-	      break;
-	    case 'M':		/* Maximum resident set size.  */
-	      fprintf (fp, "%lu", ptok ((UL) resp->ru.ru_maxrss));
-	      break;
+
+        case 'K': /* Average mem usage == data+stack+text.  */
+          fprintf (fp, "%lu",
+                   MSEC_TO_TICKS (v) == 0 ? 0 :
+                   get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                   get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                   get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+          break;
+        case 'M': /* Maximum resident set size.  */
+          fprintf (fp, "%" PRIuMAX, get_rusage_maxrss_kb (&resp->ru));
+          break;
+
 	    case 'O':		/* Outputs.  */
 	      fprintf (fp, "%ld", resp->ru.ru_oublock);
 	      break;
@@ -560,11 +531,13 @@ summarize (fp, fmt, command, resp)
 	    case 'W':		/* Times swapped out.  */
 	      fprintf (fp, "%ld", resp->ru.ru_nswap);
 	      break;
-	    case 'X':		/* Average shared text size.  */
-	      fprintf (fp, "%lu",
-		       MSEC_TO_TICKS (v) == 0 ? 0 :
-		       ptok ((UL) resp->ru.ru_ixrss) / MSEC_TO_TICKS (v));
-	      break;
+
+        case 'X': /* Average shared text size.  */
+          fprintf (fp, "%" PRIuMAX,
+                   MSEC_TO_TICKS (v) == 0 ? 0 :
+                   get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+          break;
+
 	    case 'Z':		/* Page size.  */
 	      fprintf (fp, "%d", getpagesize ());
 	      break;
@@ -579,22 +552,26 @@ summarize (fp, fmt, command, resp)
 	    case 'k':		/* Signals delivered.  */
 	      fprintf (fp, "%ld", resp->ru.ru_nsignals);
 	      break;
-	    case 'p':		/* Average stack segment.  */
-	      fprintf (fp, "%lu",
-		       MSEC_TO_TICKS (v) == 0 ? 0 :
-		       ptok ((UL) resp->ru.ru_isrss) / MSEC_TO_TICKS (v));
-	      break;
+
+        case 'p': /* Average stack segment.  */
+          fprintf (fp, "%"PRIuMAX,
+                   MSEC_TO_TICKS (v) == 0 ? 0 :
+                   get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+          break;
+
 	    case 'r':		/* Incoming socket messages received.  */
 	      fprintf (fp, "%ld", resp->ru.ru_msgrcv);
 	      break;
 	    case 's':		/* Outgoing socket messages sent.  */
 	      fprintf (fp, "%ld", resp->ru.ru_msgsnd);
 	      break;
-	    case 't':		/* Average resident set size.  */
-	      fprintf (fp, "%lu",
-		       MSEC_TO_TICKS (v) == 0 ? 0 :
-		       ptok ((UL) resp->ru.ru_idrss) / MSEC_TO_TICKS (v));
-	      break;
+
+        case 't': /* Average resident set size.  */
+          fprintf (fp, "%" PRIuMAX,
+                   MSEC_TO_TICKS (v) == 0 ? 0 :
+                   get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+          break;
+
 	    case 'w':		/* Voluntary context switches.  */
 	      fprintf (fp, "%ld", resp->ru.ru_nvcsw);
 	      break;

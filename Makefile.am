@@ -37,7 +37,8 @@ bin_PROGRAMS = time
 
 time_SOURCES = \
 	src/time.c \
-	src/resuse.c src/resuse.h
+	src/resuse.c src/resuse.h \
+	src/rusage-kb.h src/rusage-kb.c
 
 time_CFLAGS = $(WARN_CFLAGS)
 
