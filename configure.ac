@@ -67,6 +67,56 @@ AC_FUNC_VPRINTF
 AC_FUNC_WAIT3
 AC_CHECK_FUNCS(strerror)
 
+
+# What memory units are reported by getrusage(2) ?
+warn_getrusage_mem_units=
+if test -z "$time_getrusage_mem_units" ; then
+  # if envvar 'time_getrusage_mem_units' isn't set,
+  # autodetect based on OS.
+  case "$host_os" in
+    minix*|aix*|*bsd*|linux*|gnu*)
+                     time_getrusage_mem_units=kb ;;
+
+    macos*|darwin*)  time_getrusage_mem_units=bytes ;;
+
+    solaris*)        time_getrusage_mem_units=pages ;;
+
+    # As a fallback, assume KB (the most common value).
+    # Set the 'warn' variable to warn the user at the end
+    # of ./configure
+    *) time_getrusage_mem_units=kb
+       warn_getrusage_mem_units=yes
+       ;;
+  esac
+fi
+
+# Define the configuration item
+case $time_getrusage_mem_units in
+  kb)
+     AC_DEFINE([GETRUSAGE_RETURNS_KB],[1],
+                [Define to 1 if getrusage(2) on this systems returns
+                 ru_maxrss in kilobytes])
+     ;;
+
+  bytes)
+     AC_DEFINE([GETRUSAGE_RETURNS_BYTES],[1],
+               [Define to 1 if getrusage(2) on this systems returns
+                ru_maxrss in bytes])
+     ;;
+
+  pages)
+     AC_DEFINE([GETRUSAGE_RETURNS_PAGES],[1],
+               [Define to 1 if getrusage(2) on this systems returns
+                ru_maxrss in pages])
+     ;;
+
+  *) # should never happen
+     AC_MSG_ERROR([invalid 'time_getrusage_mem_units' value
+                   '$time_getrusage_mem_units'])
+     ;;
+esac
+
+
 # This is needed when building outside the source dir
 # with --disable-dependency-tracking.
 # Inspired by sed's https://bugs.gnu.org/25371
@@ -77,3 +127,11 @@ AS_MKDIR_P([tests])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
+
+# Warn the user if getrusage(2) behaviour on this OS is unknown
+if test "$warn_getrusage_mem_units" ; then
+  AC_MSG_WARN([unknown getrusage behavior on operating system '$host_os'.
+               Assuming Kilobytes.
+               please report this with the output of 'uname -a' to
+               bug-time@gnu.org])
+fi
