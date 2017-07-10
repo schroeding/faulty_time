@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([GNU Time],
-	[1.7.3],
-	[bug-time@gnu.org], [],
-	[https://www.gnu.org/software/time/])
+        [m4_esyscmd([build-aux/git-version-gen .tarball-version])],
+        [bug-time@gnu.org], [],
+        [https://www.gnu.org/software/time/])
 
 dnl Must come before AM_INIT_AUTOMAKE.
 AC_CONFIG_AUX_DIR([build-aux])
