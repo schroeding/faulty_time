@@ -57,7 +57,19 @@ DISTCLEANFILES =
 ##
 ## Tests
 ##
-TESTS = tests/help-version.sh
+
+# Build the auxiliary program used for testing 'time'.
+# This program is kept minimal and POSIX-compatible on purpose,
+# and does not need gnulib's headers/modules.
+# (thus, override the global AM_CPPFLAGS/AM_CFLAGS)
+check_PROGRAMS = tests/time-aux
+tests_time_aux_SOURCES = tests/time-aux.c
+tests_time_aux_CPPFLAGS =
+tests_time_aux_CFLAGS =
+
+
+TESTS = tests/help-version.sh \
+	tests/time-max-rss.sh
 
 TEST_EXTENSIONS = .sh
 
@@ -69,6 +81,7 @@ EXTRA_DIST += tests/init.sh \
 TESTS_ENVIRONMENT = \
   top_srcdir=$(abs_top_srcdir) \
   PATH='$(abs_top_builddir)$(PATH_SEPARATOR)'$$PATH \
+  PATH='$(abs_top_builddir)/tests$(PATH_SEPARATOR)'$$PATH \
   LC_ALL=C \
   VERSION='$(VERSION)' \
   test_dir='$(abs_top_srcdir)/tests' ; \

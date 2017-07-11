@@ -28,6 +28,8 @@
 /test-suite.log
 /tests/*.log
 /tests/*.trs
+/tests/time-aux
+/tests/.deps
 
 /build-aux
 /autom4te.cache
