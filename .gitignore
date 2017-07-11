@@ -28,3 +28,8 @@
 /test-suite.log
 /tests/*.log
 /tests/*.trs
+
+/build-aux
+/autom4te.cache
+/time-*.tar.gz
+/time-*.tar.xz
