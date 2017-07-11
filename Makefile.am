@@ -53,3 +53,24 @@ EXTRA_DIST += \
 info_TEXINFOS = doc/time.texi
 
 DISTCLEANFILES =
+
+##
+## Tests
+##
+TESTS = tests/help-version.sh
+
+TEST_EXTENSIONS = .sh
+
+EXTRA_DIST += tests/init.sh \
+	$(TESTS)
+
+# Note: the "9>&2" redirection is part of Automake's parallel-tests.
+#       see also stderr_fileno in 'init.cfg'
+TESTS_ENVIRONMENT = \
+  top_srcdir=$(abs_top_srcdir) \
+  PATH='$(abs_top_builddir)$(PATH_SEPARATOR)'$$PATH \
+  LC_ALL=C \
+  VERSION='$(VERSION)' \
+  test_dir='$(abs_top_srcdir)/tests' ; \
+  export top_srcdir PATH LC_ALL VERSION test_dir ; \
+  9>&2

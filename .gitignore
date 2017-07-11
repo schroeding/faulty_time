@@ -24,3 +24,7 @@
 /stamp.h*
 
 /time
+
+/test-suite.log
+/tests/*.log
+/tests/*.trs
