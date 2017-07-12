@@ -32,6 +32,7 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
@@ -131,8 +132,6 @@ typedef RETSIGTYPE (*sighandler) ();
 /* Return the number of clock ticks that occur in M milliseconds.  */
 #define MSEC_TO_TICKS(m) ((m) / MSEC_PER_TICK)
 
-typedef enum {false, true} boolean;
-
 #define UL unsigned long
 
 /* The default output format.  */
@@ -182,7 +181,7 @@ static const char *const longstats[] =
 };
 
 /* If true, show an English description next to each statistic.  */
-static boolean verbose;
+static bool verbose;
 
 /* Name of output file.  Only used if -o option is given.  */
 static const char *outfile;
@@ -191,7 +190,7 @@ static const char *outfile;
 static FILE *outfp;
 
 /* If true, append to `outfile' rather than truncating it.  */
-static boolean append;
+static bool append;
 
 /* The output format string.  */
 static const char *output_format;
@@ -200,7 +199,7 @@ static const char *output_format;
 char *program_name;
 
 /* Quiet mode: do not print info about abnormal terminations */
-static boolean quiet;
+static bool quiet;
 
 static struct option longopts[] =
 {
