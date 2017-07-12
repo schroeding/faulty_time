@@ -36,6 +36,7 @@
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
+#include "progname.h"
 #include "error.h"
 #define Version VERSION
 #include "version-etc.h"
@@ -194,9 +195,6 @@ static bool append;
 
 /* The output format string.  */
 static const char *output_format;
-
-/* The name this program was invoked by.  */
-char *program_name;
 
 /* Quiet mode: do not print info about abnormal terminations */
 static bool quiet;
@@ -644,7 +642,6 @@ getargs (argc, argv)
   outfp = stderr;
   append = false;
   output_format = default_format;
-  program_name = argv[0];
 
   /* Set the format string from the environment.  Do this before checking
      the args so that we won't clobber a user-specified format.  */
@@ -762,6 +759,7 @@ main (argc, argv)
   RESUSE res;
   int status;
 
+  set_program_name (argv[0]);
   command_line = getargs (argc, argv);
   run_command (command_line, &res);
   summarize (outfp, output_format, command_line, &res);
