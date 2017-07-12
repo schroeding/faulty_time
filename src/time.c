@@ -133,7 +133,6 @@ typedef RETSIGTYPE (*sighandler) ();
 /* Return the number of clock ticks that occur in M milliseconds.  */
 #define MSEC_TO_TICKS(m) ((m) / MSEC_PER_TICK)
 
-#define UL unsigned long
 
 /* The default output format.  */
 static const char *const default_format =
