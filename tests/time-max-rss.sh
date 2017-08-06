@@ -41,6 +41,11 @@ b=$(cat mem-baseline) || framework_failure_ "failed to read mem-baseline"
 c=$(cat mem-5MB) || framework_failure_ "failed to read mem-5MB"
 d=$(( c - b ))
 
+# On some systems (e.g. OpenSolaris) getrusage(2) returns zero in ru_maxrss.
+# Detect and skip the test if this is the case.
+test "$b" -eq "0" && test "$c" -eq 0 \
+  && skip_ "getrusage(2) returns zero in ru_maxrss"
+
 # There could be alot of variation between each invocation,
 # accept a reasonable range
 if test "$d" -ge 5000 && test "$d" -le 6000 ; then
