@@ -64,7 +64,8 @@ except that this permission notice may be stated in a translation approved
 by the Foundation.
 @end titlepage
 
-@node Top, , (dir), (dir)
+@node Top
+@top Time
 
 @ifinfo
 This file documents the the GNU @code{time} command for running programs
@@ -74,27 +75,9 @@ This is edition @value{EDITION}, for version @value{VERSION}.
 
 @menu
 * Resource Measurement::  Measuring program resource use.
-
- --- The Detailed Node Listing ---
-
-Measuring Program Resource Use
-
-* Setting Format::      Selecting the information reported by @code{time}.
-* Format String::	The information @code{time} can report.
-* Redirecting::         Writing the information to a file.
-* Examples::		Examples of using @code{time}.
-* Accuracy::		Limitations on the accuracy of @code{time} output.
-* Invoking time::	Summary of the options to the @code{time} command.
-
-The Format String
-
-* Time Resources::
-* Memory Resources::
-* I/O Resources::
-* Command Info::
 @end menu
 
-@node Resource Measurement, , , Top
+@node Resource Measurement
 @chapter Measuring Program Resource Use
 @findex time
 @kindex time
