@@ -1,12 +1,21 @@
 dnl Process this file with autoconf to produce a configure script.
 
+dnl Minimum Autoconf version required.
+AC_PREREQ([2.69])
+
 AC_INIT([GNU Time],
-        [m4_esyscmd([build-aux/git-version-gen .tarball-version])],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
         [bug-time@gnu.org], [],
         [https://www.gnu.org/software/time/])
 
+AC_CONFIG_SRCDIR([src/time.c])
+
 dnl Must come before AM_INIT_AUTOMAKE.
 AC_CONFIG_AUX_DIR([build-aux])
+
+dnl Where to generate output; srcdir location.
+AC_CONFIG_HEADERS([config.h:config.in])
+
 AM_INIT_AUTOMAKE([
 	1.11.1
 	subdir-objects
@@ -15,18 +24,16 @@ AM_INIT_AUTOMAKE([
 	parallel-tests
 ])
 
-dnl Minimum Autoconf version required.
-AC_PREREQ([2.62])
 
-
-dnl Where to generate output; srcdir location.
-AC_CONFIG_HEADERS([config.h:config.in])
-AC_CONFIG_SRCDIR([src/time.c])
 
 dnl Checks for programs.
-AC_PROG_CC
+AC_USE_SYSTEM_EXTENSIONS
+AC_PROG_CC_STDC
+AM_PROG_CC_C_O
 AC_PROG_CPP
+AC_PROG_GCC_TRADITIONAL
 AC_PROG_INSTALL
+AC_C_INLINE
 
 # Since we use gnulib: gl_EARLY must be called as soon as possible after
 # the C compiler is checked.  The others could be later, but we just
@@ -34,7 +41,7 @@ AC_PROG_INSTALL
 gl_EARLY
 gl_INIT
 
-# Add extra compilation warnings. These will only apply to datamash.c not to
+# Add extra compilation warnings. These will only apply to src/*.c not to
 # any gnulib modules). See $(WARN_CFLAGS) in Makefile.am
 gl_WARN_ADD([-Wall])
 gl_WARN_ADD([-Wextra])
