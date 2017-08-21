@@ -37,14 +37,13 @@ get_exit_code (const char* num)
 static void
 do_malloc (const char* optarg)
 {
-  float f = 0;
   long int l = 0, i = 0, multiplier = 1 ;
   void *p = NULL ;
   char* pch = NULL;
 
   errno = 0;
-  f = strtof (optarg, &pch);
-  if (errno != 0 || pch == optarg || f <= 0 )
+  l = strtol (optarg, &pch, 10);
+  if (errno != 0 || pch == optarg || l <= 0 )
     errx (EXIT_CANCELED, "invalid malloc request '%s'", optarg);
 
   /* Optional multiplier */
@@ -78,12 +77,11 @@ do_malloc (const char* optarg)
     errx (EXIT_CANCELED, "invalid malloc request '%s' " \
           "(multiplier error)", optarg);
 
-  f = f * multiplier ;
-  if ( f < 1 || f > 1.5 * 1024 * 1024 * 1024 )
+  l = l * multiplier ;
+  if ( l < 1 || l > 1024 * 1024 * 1024 )
     errx (EXIT_CANCELED, "invalid malloc request '%s' " \
           "(size too large/small)", optarg);
 
-  l = (long int)f;
   p = malloc (l);
   if (p==NULL)
     errx (EXIT_FAILURE, "malloc failed (%ld bytes), errno=%d", l, errno);
@@ -97,15 +95,13 @@ do_malloc (const char* optarg)
 static void
 do_busy_loop (const char* optarg)
 {
-  float f = 0;
-  long int l = 0, i = 0, multiplier = 1 ;
-  void *p = NULL ;
+  long int l = 0, multiplier = 1 ;
   char* pch = NULL;
   time_t end ;
 
   errno = 0;
-  f = strtof (optarg, &pch);
-  if (errno != 0 || pch == optarg || f <= 0 )
+  l = strtol (optarg, &pch, 10);
+  if (errno != 0 || pch == optarg || l <= 0 )
     errx (EXIT_CANCELED, "invalid busy-loop time '%s'", optarg);
 
   /* Optional multiplier */
@@ -137,14 +133,14 @@ do_busy_loop (const char* optarg)
     errx (EXIT_CANCELED, "invalid busy-loop time '%s' " \
           "(unit error)", optarg);
 
-  f = f * multiplier ;
-  if ( f < 1 || f > 24 * 60 * 60 )
+  l = l * multiplier ;
+  if ( l < 1 || l > 24 * 60 * 60 )
     errx (EXIT_CANCELED, "invalid busy-loop time '%s' " \
           "(too large/small)", optarg);
 
   /* waste one more second, to ensure we don't go below the request time,
      since the resolution is 1 second.  */
-  end = time(NULL) + (int)f + 1;
+  end = time(NULL) + (int)l + 1;
 
   while ( time(NULL) < end ) {
   }
