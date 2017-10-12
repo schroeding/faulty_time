@@ -1,3 +1,46 @@
+* Noteworthy changes in release 1.8 (????-??-??) [?]
+
+** Licensing
+
+  First official release under GPLv3-or-later.
+  Previous version (v1.7) was GPLv2-or-later.
+  The code in the git repository has been updated to GPLv3-or-later
+  in 2015 (in git-tagged version 1.7.1).
+
+
+** New Features
+
+  time supports new -q/--quiet option to suppresses abnormal
+  program terminal (non-exit codes or signals).
+  Modelled after Debian's  https://bugs.debian.org/56853 .
+
+  time now uses the following exit codes (same as GNU coreutils' env):
+   125 = Wrong usage or internal error prior to exec attempt.
+   126 = Program located, but not usable.
+   127 = Could not find program to exec.
+
+  time now exits with code '128 + Signal number' when the program
+  is terminated by a signal.
+  Modelled after Debian's 'non-normal-exit' upstream patch,
+  and behaves the same as GNU coreutils' timeout(1).
+
+  time now reports MAX-RSS values correctly on modern systems
+  (the old code base, last updated in 1996, incorrectly calculated
+  pages/kilobytes and overestimated MAX-RSS).
+  Modelled after Debian's https://bugs.debian.org/649402 .
+
+
+** Improvements
+
+  Use gnulib modules and build infrastructure.
+
+  New tests infrastructure (make check).
+
+  Portability improvements (e.g. detection of time.h, sys/resources.h,
+  getrusage now delegated to gnulib).
+
+
+
 Changes in version 1.7.1:
 * Released under GPL V3 License
 
