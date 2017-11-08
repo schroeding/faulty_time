@@ -429,7 +429,7 @@ summarize (fp, fmt, command, resp)
   unsigned long r;		/* Elapsed real milliseconds.  */
   unsigned long v;		/* Elapsed virtual (CPU) milliseconds.  */
 
-  if (!quiet)
+  if (!quiet && output_format != posix_format)
     {
       if (WIFSTOPPED (resp->waitstatus))
         fprintf (fp, "Command stopped by signal %d\n",

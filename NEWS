@@ -1,3 +1,13 @@
+* Noteworthy changes in release ?.? (?-?-?) []
+
+** Changes in behaviour
+
+  "time -p" no longers adds the "Command exited with non-zero status" message.
+  This is a backward-incompatible change for better POSIX compliance.
+  Many downstream distributions previously patched 'time' to behave this way
+  (Debian added '-q', Fedora patched '-p').
+
+
 * Noteworthy changes in release 1.8 (2017-11-07) [stable]
 
 ** Licensing
