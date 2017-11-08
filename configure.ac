@@ -19,7 +19,6 @@ AC_CONFIG_HEADERS([config.h:config.in])
 AM_INIT_AUTOMAKE([
 	1.11.1
 	subdir-objects
-	dist-xz
 	color-tests
 	parallel-tests
 ])
