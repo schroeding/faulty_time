@@ -52,6 +52,11 @@ EXTRA_DIST += \
 
 info_TEXINFOS = doc/time.texi
 
+doc_time_TEXINFOS = \
+  doc/fdl.texi \
+  doc/version.texi
+
+
 DISTCLEANFILES =
 
 ##
