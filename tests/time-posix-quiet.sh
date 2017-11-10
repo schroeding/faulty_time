@@ -25,6 +25,12 @@
 which false > /dev/null || skip_ "'false' program required for this test"
 which sed > /dev/null || skip_ "'sed' program required for this test"
 
+# Remove the actual values from a file (they'll differ every run).
+remove_numeric_values()
+{
+    sed -e 's/[?0-9.]*//g' -e 's/ *$//' "$@"
+}
+
 fail=
 
 
@@ -35,14 +41,13 @@ fail=
 
 cat<<EOF > exp-default || framework_failure_ "failed to write exp-default"
 Command exited with non-zero status
-user system :elapsed ?%CPU (avgtext+avgdata maxresident)k
+user system :elapsed %CPU (avgtext+avgdata maxresident)k
 inputs+outputs (major+minor)pagefaults swaps
 EOF
 
 returns_ 1 env time -o out-def1 false || fail=1
 
-# Remove the actual values (they'll differ every run)
-sed -e 's/[0-9.]*//g' -e 's/ *$//' out-def1 > out-default \
+remove_numeric_values out-def1 > out-default \
     || framework_failure_ "sed failed on out-def1"
 
 compare_ out-default exp-default || fail=1
@@ -56,14 +61,13 @@ compare_ out-default exp-default || fail=1
 ## originally from Debian, "-q" supresses the "command exited..." message
 
 cat<<EOF > exp-q  || framework_failure_ "failed to write exp-q"
-user system :elapsed ?%CPU (avgtext+avgdata maxresident)k
+user system :elapsed %CPU (avgtext+avgdata maxresident)k
 inputs+outputs (major+minor)pagefaults swaps
 EOF
 
 returns_ 1 env time -q -o out-q1 false || fail=1
 
-# Remove the actual values (they'll differ every run)
-sed -e 's/[0-9.]*//g' -e 's/ *$//' out-q1 > out-q \
+remove_numeric_values out-q1 > out-q \
     || framework_failure_ "sed failed on out-q"
 
 compare_ out-q exp-q || fail=1
@@ -81,8 +85,7 @@ EOF
 
 returns_ 1 env time -p -o out-posix1 false || fail=1
 
-# Remove the actual values (they'll differ every run)
-sed -e 's/[0-9.]*//g' -e 's/ *$//' out-posix1 > out-posix \
+remove_numeric_values out-posix1 > out-posix \
     || framework_failure_ "sed failed on out-posix1"
 
 compare_ out-posix exp-posix || fail=1
