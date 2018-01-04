@@ -2,7 +2,7 @@
 
 # Test output quietness with -q and -p
 
-# Copyright (C) 2017 Assaf Gordon <assafgordon@gmail.com>
+# Copyright (C) 2017 Free Software Foundation, Inc.
 #
 # This file is part of GNU Time.
 #

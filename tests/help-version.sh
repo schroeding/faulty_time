@@ -3,7 +3,7 @@
 # Make sure all of these programs work properly
 # when invoked with --help or --version.
 
-# Copyright (C) 2017 Assaf Gordon <assafgordon@gmail.com>
+# Copyright (C) 2017 Free Software Foundation, Inc.
 #
 # This file is part of GNU Time.
 #
