@@ -1,5 +1,5 @@
 /* resuse.c - child process resource use library
-   Copyright (C) 1993, 1996 Free Software Foundation, Inc.
+   Copyright (C) 1993-2018 Free Software Foundation, Inc.
 
    Written by David MacKenzie, with help from
    arnej@imf.unit.no (Arne Henrik Juul)
