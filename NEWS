@@ -1,5 +1,11 @@
 * Noteworthy changes in release ?.? (?-?-?) []
 
+** Improvements
+
+  time now reports percent CPU usage for programs lasting less then 1 second.
+  previously, time would report '??%' if programs lasted less than 1 second.
+  (adopted from Fedora).
+
 ** Changes in behaviour
 
   "time -p" no longers adds the "Command exited with non-zero status" message.

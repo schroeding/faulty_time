@@ -429,6 +429,8 @@ summarize (fp, fmt, command, resp)
 {
   unsigned long r;		/* Elapsed real milliseconds.  */
   unsigned long v;		/* Elapsed virtual (CPU) milliseconds.  */
+  unsigned long us_r;		/* Elapsed real microseconds.  */
+  unsigned long us_v;		/* Elapsed virtual (CPU) microseconds.  */
 
   if (!quiet && output_format != posix_format)
     {
@@ -452,6 +454,9 @@ summarize (fp, fmt, command, resp)
 
   v = resp->ru.ru_utime.tv_sec * 1000 + resp->ru.ru_utime.TV_MSEC +
     resp->ru.ru_stime.tv_sec * 1000 + resp->ru.ru_stime.TV_MSEC;
+
+  us_r = resp->elapsed.tv_usec;
+  us_v = resp->ru.ru_utime.tv_usec + resp->ru.ru_stime.tv_usec;
 
   while (*fmt)
     {
@@ -510,6 +515,8 @@ summarize (fp, fmt, command, resp)
 	      /* % cpu is (total cpu time)/(elapsed time).  */
 	      if (r > 0)
 		fprintf (fp, "%lu%%", (v * 100 / r));
+	      else if (us_r > 0)
+		fprintf (fp, "%lu%%", (us_v * 100 / us_r));
 	      else
 		fprintf (fp, "?%%");
 	      break;
