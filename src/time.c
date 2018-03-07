@@ -250,7 +250,7 @@ Usage: %s [-apvV] [-f format] [-o file] [--append] [--verbose]\n\
   -f, --format=FORMAT       use the specified FORMAT instead of the default\n\
 "), stdout);
   fputs (_("\
-  -o, --output=FILE         write to FILE instead of STDOUT\n"), stdout);
+  -o, --output=FILE         write to FILE instead of STDERR\n"), stdout);
   fputs (_("\
   -p, --portability         print POSIX standard 1003.2 conformant string:\n\
                               real %%e\n\
