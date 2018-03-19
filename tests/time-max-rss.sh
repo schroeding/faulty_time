@@ -52,7 +52,7 @@ if test "$d" -ge 5000 && test "$d" -le 6000 ; then
     : # acceptable values: 5000-6000 KB
 else
     cat<<EOF>&2
-time(1) failed to detect 5MB allcoation.
+time(1) failed to detect 5MB allocation.
   mem-baseline(kb): $b
   mem-5MB(kb):      $c
   delta(kb):        $d
