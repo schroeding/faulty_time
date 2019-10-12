@@ -1,11 +1,13 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <time.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <limits.h>
+#include <signal.h>
 
 /* 1 second = 1E9 nanoseconds */
 #define NS_1E9 1000000000
@@ -35,6 +37,36 @@ get_exit_code (const char* num)
   l = strtol (optarg, &pch, 10);
   if (errno != 0 || l < 0 || l > 255 || pch == optarg || *pch != '\0' )
     errx (EXIT_CANCELED, "invalid exit code '%s'", optarg);
+
+  return (int)l;
+}
+
+static int
+get_signal_value (const char* sigtext)
+{
+  long int l = 0;
+  char *pch = NULL ;
+
+  if (strncmp (sigtext, "SIG",3)==0)
+    sigtext += 3;
+
+  if (strncmp (sigtext, "KILL",4)==0)
+    return SIGKILL;
+  if (strncmp (sigtext, "TERM",4)==0)
+    return SIGTERM;
+  if (strncmp (sigtext, "ILL",4)==0)
+    return SIGILL;
+  if (strncmp (sigtext, "INT",4)==0)
+    return SIGINT;
+  if (strncmp (sigtext, "SEGV",4)==0)
+    return SIGSEGV;
+  if (strncmp (sigtext, "STOP",4)==0)
+    return SIGSTOP;
+
+  errno = 0;
+  l = strtol (optarg, &pch, 10);
+  if (errno != 0 || l < 0 || l > 255 || pch == optarg || *pch != '\0' )
+    errx (EXIT_CANCELED, "invalid signal code '%s'", optarg);
 
   return (int)l;
 }
@@ -344,8 +376,9 @@ int main (int argc, char *argv[])
 {
   int c;
   int rc = 0 ;
+  int force_signal = 0;
 
-  while ( (c = getopt(argc,argv,"e:m:b:s:H:k:h")) != -1 )
+  while ( (c = getopt(argc,argv,"e:m:b:s:H:k:hS:")) != -1 )
     {
       switch (c)
         {
@@ -377,9 +410,23 @@ int main (int argc, char *argv[])
           do_busy_sys_sleep (optarg);
           break;
 
+        case 'S': /* Force termination using a signal */
+	  force_signal = get_signal_value (optarg);
+          break;
+
         default:
           errx (EXIT_CANCELED,"invalid option");
         }
+    }
+
+  if (force_signal)
+    {
+      int k = kill (getpid (), force_signal);
+
+      /* Except SIGSTOP, all signals are not expected to return from kill(2) */
+      if (k && force_signal != SIGSTOP)
+        errx (EXIT_FAILURE, "kill failed to send signal %d (errno=%d)",
+              force_signal, errno);
     }
 
   return rc;
