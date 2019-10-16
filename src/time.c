@@ -461,164 +461,184 @@ summarize (fp, fmt, command, resp)
   while (*fmt)
     {
       switch (*fmt)
-	{
-	case '%':
-	  switch (*++fmt)
-	    {
-	    case '%':		/* Literal '%'.  */
-	      putc ('%', fp);
-	      break;
-	    case 'C':		/* The command that got timed.  */
-	      fprintargv (fp, command, " ");
-	      break;
-        case 'D': /* Average unshared data size.  */
-          fprintf (fp, "%" PRIuMAX,
-                   MSEC_TO_TICKS (v) == 0 ? 0 :
-                   get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
-                   get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+        {
+        case '%':
+
+          switch (*++fmt)
+            {
+            case '%':		/* Literal '%'.  */
+              putc ('%', fp);
+              break;
+
+            case 'C':		/* The command that got timed.  */
+              fprintargv (fp, command, " ");
+              break;
+
+            case 'D': /* Average unshared data size.  */
+              fprintf (fp, "%" PRIuMAX,
+                       MSEC_TO_TICKS (v) == 0 ? 0 :
+                       get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                       get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+              break;
+
+            case 'E':		/* Elapsed real (wall clock) time.  */
+              if (resp->elapsed.tv_sec >= 3600)	/* One hour -> h:m:s.  */
+                fprintf (fp, "%ld:%02ld:%02ld",
+                         (long int)(resp->elapsed.tv_sec / 3600),
+                         (long int)((resp->elapsed.tv_sec % 3600) / 60),
+                         (long int)(resp->elapsed.tv_sec % 60));
+              else
+                fprintf (fp, "%ld:%02ld.%02ld",	/* -> m:s.  */
+                         (long int)(resp->elapsed.tv_sec / 60),
+                         (long int)(resp->elapsed.tv_sec % 60),
+                         (long int)(resp->elapsed.tv_usec / 10000));
+              break;
+
+            case 'F':		/* Major page faults.  */
+              fprintf (fp, "%ld", resp->ru.ru_majflt);
+              break;
+
+            case 'I':		/* Inputs.  */
+              fprintf (fp, "%ld", resp->ru.ru_inblock);
+              break;
+
+            case 'K': /* Average mem usage == data+stack+text.  */
+              fprintf (fp, "%lu",
+                       MSEC_TO_TICKS (v) == 0 ? 0 :
+                       (long unsigned int)
+                       (get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                        get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
+                        get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v)));
+              break;
+
+            case 'M': /* Maximum resident set size.  */
+              fprintf (fp, "%" PRIuMAX, get_rusage_maxrss_kb (&resp->ru));
+              break;
+
+            case 'O':		/* Outputs.  */
+              fprintf (fp, "%ld", resp->ru.ru_oublock);
+              break;
+
+            case 'P':		/* Percent of CPU this job got.  */
+              /* % cpu is (total cpu time)/(elapsed time).  */
+              if (r > 0)
+                fprintf (fp, "%lu%%", (v * 100 / r));
+              else if (us_r > 0)
+                fprintf (fp, "%lu%%", (us_v * 100 / us_r));
+              else
+                fprintf (fp, "?%%");
+              break;
+
+            case 'R':		/* Minor page faults (reclaims).  */
+              fprintf (fp, "%ld", resp->ru.ru_minflt);
+              break;
+
+            case 'S':		/* System time.  */
+              fprintf (fp, "%ld.%02ld",
+                       (long int)resp->ru.ru_stime.tv_sec,
+                       (long int)(resp->ru.ru_stime.TV_MSEC / 10));
+              break;
+
+            case 'U':		/* User time.  */
+              fprintf (fp, "%ld.%02ld",
+                       (long int)(resp->ru.ru_utime.tv_sec),
+                       (long int)(resp->ru.ru_utime.TV_MSEC / 10));
+              break;
+
+            case 'W':		/* Times swapped out.  */
+              fprintf (fp, "%ld", resp->ru.ru_nswap);
+              break;
+
+            case 'X': /* Average shared text size.  */
+              fprintf (fp, "%" PRIuMAX,
+                       MSEC_TO_TICKS (v) == 0 ? 0 :
+                       get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+              break;
+
+            case 'Z':		/* Page size.  */
+              fprintf (fp, "%d", getpagesize ());
+              break;
+
+            case 'c':		/* Involuntary context switches.  */
+              fprintf (fp, "%ld", resp->ru.ru_nivcsw);
+              break;
+
+            case 'e':		/* Elapsed real time in seconds.  */
+              fprintf (fp, "%ld.%02ld",
+                       (long int)resp->elapsed.tv_sec,
+                       (long int)(resp->elapsed.tv_usec / 10000));
+              break;
+
+            case 'k':		/* Signals delivered.  */
+              fprintf (fp, "%ld", resp->ru.ru_nsignals);
+              break;
+
+            case 'p': /* Average stack segment.  */
+              fprintf (fp, "%"PRIuMAX,
+                       MSEC_TO_TICKS (v) == 0 ? 0 :
+                       get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+              break;
+
+            case 'r':		/* Incoming socket messages received.  */
+              fprintf (fp, "%ld", resp->ru.ru_msgrcv);
+              break;
+
+            case 's':		/* Outgoing socket messages sent.  */
+              fprintf (fp, "%ld", resp->ru.ru_msgsnd);
+              break;
+
+            case 't': /* Average resident set size.  */
+              fprintf (fp, "%" PRIuMAX,
+                       MSEC_TO_TICKS (v) == 0 ? 0 :
+                       get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
+              break;
+
+            case 'w':		/* Voluntary context switches.  */
+              fprintf (fp, "%ld", resp->ru.ru_nvcsw);
+              break;
+
+            case 'x':		/* Exit status.  */
+              fprintf (fp, "%d", WEXITSTATUS (resp->waitstatus));
+              break;
+
+            case '\0':
+              putc ('?', fp);
+              return;
+
+            default:
+              putc ('?', fp);
+              putc (*fmt, fp);
+            }
+
+          ++fmt;
+          break; /* end of "case '%'" */
+
+        case '\\':		/* Format escape.  */
+          switch (*++fmt)
+            {
+            case 't':
+              putc ('\t', fp);
+              break;
+            case 'n':
+              putc ('\n', fp);
+              break;
+            case '\\':
+              putc ('\\', fp);
+              break;
+            default:
+              putc ('?', fp);
+              putc ('\\', fp);
+              putc (*fmt, fp);
+            }
+          ++fmt;
           break;
-	    case 'E':		/* Elapsed real (wall clock) time.  */
-	      if (resp->elapsed.tv_sec >= 3600)	/* One hour -> h:m:s.  */
-		fprintf (fp, "%ld:%02ld:%02ld",
-			 (long int)(resp->elapsed.tv_sec / 3600),
-			 (long int)((resp->elapsed.tv_sec % 3600) / 60),
-			 (long int)(resp->elapsed.tv_sec % 60));
-	      else
-		fprintf (fp, "%ld:%02ld.%02ld",	/* -> m:s.  */
-			 (long int)(resp->elapsed.tv_sec / 60),
-			 (long int)(resp->elapsed.tv_sec % 60),
-			 (long int)(resp->elapsed.tv_usec / 10000));
-	      break;
-	    case 'F':		/* Major page faults.  */
-	      fprintf (fp, "%ld", resp->ru.ru_majflt);
-	      break;
-	    case 'I':		/* Inputs.  */
-	      fprintf (fp, "%ld", resp->ru.ru_inblock);
-	      break;
 
-        case 'K': /* Average mem usage == data+stack+text.  */
-          fprintf (fp, "%lu",
-                   MSEC_TO_TICKS (v) == 0 ? 0 :
-		   (long unsigned int)
-                   (get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
-                    get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v) +
-                    get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v)));
-          break;
-        case 'M': /* Maximum resident set size.  */
-          fprintf (fp, "%" PRIuMAX, get_rusage_maxrss_kb (&resp->ru));
-          break;
-
-	    case 'O':		/* Outputs.  */
-	      fprintf (fp, "%ld", resp->ru.ru_oublock);
-	      break;
-	    case 'P':		/* Percent of CPU this job got.  */
-	      /* % cpu is (total cpu time)/(elapsed time).  */
-	      if (r > 0)
-		fprintf (fp, "%lu%%", (v * 100 / r));
-	      else if (us_r > 0)
-		fprintf (fp, "%lu%%", (us_v * 100 / us_r));
-	      else
-		fprintf (fp, "?%%");
-	      break;
-	    case 'R':		/* Minor page faults (reclaims).  */
-	      fprintf (fp, "%ld", resp->ru.ru_minflt);
-	      break;
-	    case 'S':		/* System time.  */
-	      fprintf (fp, "%ld.%02ld",
-		       (long int)resp->ru.ru_stime.tv_sec,
-		       (long int)(resp->ru.ru_stime.TV_MSEC / 10));
-	      break;
-	    case 'U':		/* User time.  */
-	      fprintf (fp, "%ld.%02ld",
-		       (long int)(resp->ru.ru_utime.tv_sec),
-		       (long int)(resp->ru.ru_utime.TV_MSEC / 10));
-	      break;
-	    case 'W':		/* Times swapped out.  */
-	      fprintf (fp, "%ld", resp->ru.ru_nswap);
-	      break;
-
-        case 'X': /* Average shared text size.  */
-          fprintf (fp, "%" PRIuMAX,
-                   MSEC_TO_TICKS (v) == 0 ? 0 :
-                   get_rusage_ixrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
-          break;
-
-	    case 'Z':		/* Page size.  */
-	      fprintf (fp, "%d", getpagesize ());
-	      break;
-	    case 'c':		/* Involuntary context switches.  */
-	      fprintf (fp, "%ld", resp->ru.ru_nivcsw);
-	      break;
-	    case 'e':		/* Elapsed real time in seconds.  */
-	      fprintf (fp, "%ld.%02ld",
-		       (long int)resp->elapsed.tv_sec,
-		       (long int)(resp->elapsed.tv_usec / 10000));
-	      break;
-	    case 'k':		/* Signals delivered.  */
-	      fprintf (fp, "%ld", resp->ru.ru_nsignals);
-	      break;
-
-        case 'p': /* Average stack segment.  */
-          fprintf (fp, "%"PRIuMAX,
-                   MSEC_TO_TICKS (v) == 0 ? 0 :
-                   get_rusage_isrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
-          break;
-
-	    case 'r':		/* Incoming socket messages received.  */
-	      fprintf (fp, "%ld", resp->ru.ru_msgrcv);
-	      break;
-	    case 's':		/* Outgoing socket messages sent.  */
-	      fprintf (fp, "%ld", resp->ru.ru_msgsnd);
-	      break;
-
-        case 't': /* Average resident set size.  */
-          fprintf (fp, "%" PRIuMAX,
-                   MSEC_TO_TICKS (v) == 0 ? 0 :
-                   get_rusage_idrss_kb (&resp->ru) / MSEC_TO_TICKS (v));
-          break;
-
-	    case 'w':		/* Voluntary context switches.  */
-	      fprintf (fp, "%ld", resp->ru.ru_nvcsw);
-	      break;
-	    case 'x':		/* Exit status.  */
-	      fprintf (fp, "%d", WEXITSTATUS (resp->waitstatus));
-	      break;
-	    case '\0':
-	      putc ('?', fp);
-	      return;
-	    default:
-	      putc ('?', fp);
-	      putc (*fmt, fp);
-	    }
-	  ++fmt;
-	  break;
-
-	case '\\':		/* Format escape.  */
-	  switch (*++fmt)
-	    {
-	    case 't':
-	      putc ('\t', fp);
-	      break;
-	    case 'n':
-	      putc ('\n', fp);
-	      break;
-	    case '\\':
-	      putc ('\\', fp);
-	      break;
-	    default:
-	      putc ('?', fp);
-	      putc ('\\', fp);
-	      putc (*fmt, fp);
-	    }
-	  ++fmt;
-	  break;
-
-	default:
-	  putc (*fmt++, fp);
-	}
+        default:
+          putc (*fmt++, fp);
+        }
 
       if (ferror (fp))
-	error (1, errno, "write error");
+        error (1, errno, "write error");
     }
   putc ('\n', fp);
 
