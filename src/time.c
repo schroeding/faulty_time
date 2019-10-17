@@ -37,6 +37,7 @@
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
+#include "sig2str.h"
 #include "progname.h"
 #include "error.h"
 #define Version VERSION
@@ -537,6 +538,47 @@ summarize (fp, fmt, command, resp)
               fprintf (fp, "%ld.%02ld",
                        (long int)resp->ru.ru_stime.tv_sec,
                        (long int)(resp->ru.ru_stime.TV_MSEC / 10));
+              break;
+
+            case 'T':
+              switch (*++fmt)
+                {
+                case 't':   /* termination type: normal, signalled, stopped */
+                  fputs ( WIFSTOPPED (resp->waitstatus) ? "stopped" :
+                          ( WIFSIGNALED (resp->waitstatus) ? "signalled" :
+                            "normal" ), fp );
+                  break;
+
+                case 'n': /* signal number, IF terminated by a signal */
+                  if (WIFSIGNALED (resp->waitstatus))
+                    fprintf (fp, "%d", WTERMSIG (resp->waitstatus));
+                  break;
+
+                case 's': /* signal-spec (name), IF terminated by a signal */
+                  if (WIFSIGNALED (resp->waitstatus))
+                    {
+                      char buf[SIG2STR_MAX+1];
+                      int i = sig2str (WTERMSIG (resp->waitstatus), buf);
+                      if (i==-1)
+                        fprintf (fp, "(%d)",WTERMSIG (resp->waitstatus));
+                      else
+                        fputs (buf, fp);
+                    }
+                  break;
+
+                case 'x': /* exit code IF terminated normally */
+                  if (WIFEXITED (resp->waitstatus))
+                    fprintf (fp, "%d", WEXITSTATUS (resp->waitstatus));
+                  break;
+
+                case '\0':
+                  fprintf (fp, "T=missing letter");
+                  break;
+
+                default:
+                  fprintf (fp, "T?=unknown");
+                  break;
+                }
               break;
 
             case 'U':		/* User time.  */
