@@ -43,7 +43,7 @@ time_SOURCES = \
 time_CFLAGS = $(WARN_CFLAGS)
 
 time_LDADD = \
-       $(top_builddir)/lib/lib$(PACKAGE).a
+       lib/lib$(PACKAGE).a
 
 #SUBDIRS = . gnulib-tests
 
