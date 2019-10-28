@@ -208,6 +208,7 @@ might be reported as zero (@pxref{Accuracy}).
 * Memory Resources::
 * I/O Resources::
 * Command Info::
+* Termination Status::
 @end menu
 
 @node Time Resources
@@ -315,6 +316,40 @@ Name and command line arguments of the command being timed.
 @item x
 Exit status of the command.
 @end table
+
+@node Termination Status
+@subsection Termination Status
+
+The following are @emph{two-letter specifiers}:
+
+@table @code
+@item %Tt
+Exit type: the text @samp{normal} or @samp{signalled}, depending on
+how the command terminated. @samp{normal} means the program terminated
+with any exit code, not just a zero exit code.
+
+@item %Tx
+Numeric exit code @emph{if} the command exited normally (i.e., not terminated
+by a signal). This value is similar to @samp{%x} format specifier, except that
+unlike @samp{%x}, this will be @emph{empty} if the program was terminated by a
+signal.
+
+@item %Tn
+Numeric signal code @emph{if} the command was terminated by a signal (e.g.,
+the value @samp{9} if the program was terminted by SIGKILL).
+Empty if the program exited normally (i.e., not terminated by a signal).
+
+@item %Ts
+Signal name @emph{if} the command was terminated by a signal (e.g.,
+@samp{KILL} if the program was terminated by SIGKILL).
+Empty if the program exited normally (i.e., not terminated by a signal).
+
+@item %To
+The text @samp{ok} @emph{if} the command exited normally (i.e., not signalled)
+and with exit code zero. Empty otherwise.
+
+@end table
+
 
 @node Redirecting
 @section Redirecting Output
