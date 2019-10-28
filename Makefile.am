@@ -76,7 +76,8 @@ tests_time_aux_CFLAGS =
 TESTS = tests/help-version.sh \
 	tests/time-max-rss.sh \
 	tests/time-exit-codes.sh \
-	tests/time-posix-quiet.sh
+	tests/time-posix-quiet.sh \
+	tests/time-format-T.sh
 
 TEST_EXTENSIONS = .sh
 
