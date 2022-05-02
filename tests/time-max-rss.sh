@@ -2,6 +2,6 @@
 
 . "${test_dir=.}/init.sh"
 
-"test" > "test.txt"
+echo "test" > "test.txt"
 
 exit 0

@@ -6,7 +6,7 @@ value=$(cat "test.txt")
 rm -f "test.txt"
 
 if [ -z "$value" ]; then
-	exit 0
+	exit 1
 fi
 
-exit 1
+exit 0
